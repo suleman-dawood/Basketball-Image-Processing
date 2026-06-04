@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ===== CONFIG =====
+# CONFIG
 # ROOT = r"D:/StudyRelated/Machine Learning Projects/NBA/dataset/sample_annotation/train"
 # For FULL later:
 #ROOT = r"D:/StudyRelated/Machine Learning Projects/NBA/dataset/autoAnnotation/train"
@@ -85,11 +85,7 @@ def crop_upper_half(img_bgr, box_xywh_norm):
     return img_bgr[y1c:y2c, x1c:x2c]
 
 def team_color_scores(img_bgr_roi):
-    """
-    Returns (blue_prop, white_prop) in ROI using HSV thresholds.
-    - Blue (OpenCV HSV): H in [100,135], S>=60, V>=60
-    - White: S<=30, V>=200
-    """
+    
     if img_bgr_roi is None or img_bgr_roi.size == 0:
         return 0.0, 0.0
     hsv = cv2.cvtColor(img_bgr_roi, cv2.COLOR_BGR2HSV)
@@ -107,10 +103,6 @@ def team_color_scores(img_bgr_roi):
     return blue_prop, white_prop
 
 def resolve_pair_by_color(img_bgr, a, b):
-    """
-    a,b are (cls, x, y, w, h). They are assumed to be USA/Opponent overlapping.
-    Decide which to keep via color score of jersey region.
-    """
     # Ensure the two classes are USA/OPP
     if not {a[0], b[0]} <= {USA_CLASS, OPP_CLASS}:
         # If something odd, keep the bigger box
@@ -146,18 +138,6 @@ def resolve_pair_by_color(img_bgr, a, b):
     return a if area_a >= area_b else b
 
 def color_aware_clean_for_image(img_bgr, anns):
-    """
-    anns: List[(cls,x,y,w,h)], return cleaned list
-    Strategy:
-      - Basketball:
-          * Always keep (never filtered out)
-      - Referees:
-          * Always keep
-          * If overlapping strongly with players, Referee wins (player dropped)
-      - Players (USA/Opponent):
-          * If overlapping strongly (IoU > thr), keep one by color rule
-          * If no strong overlap, keep both
-    """
     # Separate classes
     balls = [a for a in anns if a[0] == BALL_CLASS]
     refs  = [a for a in anns if a[0] == REF_CLASS]
@@ -165,7 +145,7 @@ def color_aware_clean_for_image(img_bgr, anns):
 
     kept = []
 
-    # --- Balls (untouchable) ---
+    # Balls (untouchable)
     kept.extend(balls)
 
     # --- Referees (priority) ---
@@ -182,7 +162,7 @@ def color_aware_clean_for_image(img_bgr, anns):
         players = new_players
         kept.append(ref)
 
-    # --- Players (USA vs Opponent disambiguation) ---
+    # Players (USA vs Opponent disambiguation)
     used = [False] * len(players)
     for i in range(len(players)):
         if used[i]:
@@ -268,7 +248,7 @@ def main():
             # no visualisation, just log
             print(f"[OK] {name}: before={len(before)} → after={len(after)}")
 
-    print(f"\n✅ Done. Visualisations saved for {len(vis_samples)} random images in: {VIS_OUT_DIR}")
+    print(f"\n Done. Visualisations saved for {len(vis_samples)} random images in: {VIS_OUT_DIR}")
     print("   (Switch ROOT to autoAnnotation/train when you’re ready.)")
 
 
