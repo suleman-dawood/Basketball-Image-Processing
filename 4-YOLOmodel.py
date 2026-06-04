@@ -23,7 +23,7 @@ def main():
                           val=True)
     
        
-    print("✅ Model training and export complete.")
+    print(" Model training and export complete.")
 
 if __name__ == "__main__":
     main()
