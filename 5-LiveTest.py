@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import os
 from vidgear.gears import CamGear
 
-# ==== CONFIG ====
+# CONFIG
 test_url = "https://www.youtube.com/watch?v=qhVWl2Xlq0I"
 model_path = os.path.join(
     "D:/StudyRelated/Machine Learning Projects/NBA/dataset/yolo_training",
@@ -22,10 +22,10 @@ CLASS_COLORS = {
     3: (255, 0, 255)    # Magenta for Referee
 }
 
-# ==== LOAD MODEL ====
+# LOAD MODEL 
 model = YOLO(model_path)
 
-# ==== OPEN VIDEO STREAM ====
+# OPEN VIDEO STREAM 
 stream = CamGear(source=test_url, stream_mode=True, logging=True).start()
 
 # Grab first frame to set up writer
@@ -66,7 +66,7 @@ while True:
     # Write annotated frame to output video
     out.write(frame)
 
-# ==== CLEANUP ====
+# CLEANUP
 stream.stop()
 out.release()
-print("✅ Done! Saved annotated video to:", output_path)
+print("Done! Saved annotated video to:", output_path)
